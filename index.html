@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Pubsub : PubSub is a dependency free library with coalescing and Hierarchical publishing" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pubsub</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/kpthree/PubSub">View on GitHub</a>
+
+          <h1 id="project_title">Pubsub</h1>
+          <h2 id="project_tagline">PubSub is a dependency free library with coalescing and Hierarchical publishing</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/kpthree/PubSub/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/kpthree/PubSub/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>PubSub</h2>
+
+<p>PubSub is a dependency free library with coalescing and Hierarchical publishing</p>
+
+<h2>Examples</h2>
+
+<h3>Basic example without coalescing</h3>
+
+<div class="highlight"><pre><span class="c1">// Create a subscriber callback (listener) to listen</span>
+<span class="c1">// to update events on table grid</span>
+<span class="kd">var</span> <span class="nx">fnUpdateDataStore</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">topic</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// Subscribe to a save event of table grid</span>
+<span class="kd">var</span> <span class="nx">saveToken</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"TableStore"</span><span class="p">,</span> <span class="c1">// name</span>
+                                 <span class="s2">"widgets.table-grid.save"</span><span class="p">,</span> <span class="c1">// topic</span>
+                                 <span class="kc">null</span><span class="p">,</span> <span class="c1">// context</span>
+                                 <span class="nx">fnUpdateDataStore</span><span class="p">);</span> <span class="c1">// callback</span>
+
+<span class="c1">// Publish with updated data when the user hits save</span>
+<span class="c1">// of the table grid widget</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.save"</span><span class="p">,</span> <span class="c1">// topic</span>
+               <span class="p">{</span> <span class="nx">updatedRow</span><span class="o">:</span> <span class="p">{</span> <span class="nx">name</span><span class="o">:</span><span class="s2">"Charlie C"</span><span class="p">,</span> <span class="nx">age</span><span class="o">:</span> <span class="mi">32</span> <span class="p">}},</span> <span class="c1">// data</span>
+               <span class="kc">false</span><span class="p">);</span> <span class="c1">// coalesce</span>
+
+<span class="c1">// console.log: widgets.table-grid.save</span>
+<span class="c1">// console.log: {updatedRow: {age: 32, name: "Charlie C"}}</span>
+</pre></div>
+
+<h3>Basic example with coalescing</h3>
+
+<div class="highlight"><pre><span class="c1">// Create a subscriber callback (listener) to listen</span>
+<span class="c1">// to scroll event on table grid</span>
+<span class="kd">var</span> <span class="nx">fnLoadMoreData</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">topic</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// Subscribe to a scroll event of table grid</span>
+<span class="kd">var</span> <span class="nx">scrollToken</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"TableStore"</span><span class="p">,</span>
+                                   <span class="s2">"widgets.table-grid.scroll"</span><span class="p">,</span>
+                                   <span class="kc">null</span><span class="p">,</span>
+                                   <span class="nx">fnLoadMoreData</span><span class="p">);</span>
+
+<span class="c1">// Publish with updated scroll position when the user scroll</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.scroll"</span><span class="p">,</span>
+               <span class="p">{</span> <span class="nx">scrollPos</span><span class="o">:</span> <span class="p">{</span> <span class="nx">top</span><span class="o">:</span> <span class="mi">400</span><span class="p">}},</span>
+               <span class="kc">true</span><span class="p">);</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.scroll"</span><span class="p">,</span>
+               <span class="p">{</span> <span class="nx">scrollPos</span><span class="o">:</span> <span class="p">{</span> <span class="nx">top</span><span class="o">:</span> <span class="mi">458</span><span class="p">}},</span>
+               <span class="kc">true</span><span class="p">);</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.scroll"</span><span class="p">,</span>
+               <span class="p">{</span> <span class="nx">scrollPos</span><span class="o">:</span> <span class="p">{</span> <span class="nx">top</span><span class="o">:</span> <span class="mi">497</span><span class="p">}},</span>
+               <span class="kc">true</span><span class="p">);</span>
+<span class="c1">// Since scroll events are very fast occurring events,</span>
+<span class="c1">// the interest is always in the final position of scrollbar</span>
+
+<span class="c1">// console.log: widgets.table-grid.scroll</span>
+<span class="c1">// console.log: { scrollPos: { top: 497}}</span>
+<span class="c1">// note: subscriber is called only once (if published within coalescing interval. Default: 4000 ms)</span>
+</pre></div>
+
+<h3>Hierarchical publishing</h3>
+
+<div class="highlight"><pre><span class="c1">// Create a subscriber callback (listener) to listen</span>
+<span class="c1">// to update events on table grid</span>
+<span class="kd">var</span> <span class="nx">fnUpdateTableLayout</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Table layout updated"</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">topic</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">fnColumnRemove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Column removed"</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">topic</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">fnRowRemove</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Row removed"</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">topic</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// Subscribe to row level topics of table grid</span>
+<span class="kd">var</span> <span class="nx">rToken</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"TableView"</span><span class="p">,</span>
+                              <span class="s2">"widgets.table-grid.view.row-rm"</span><span class="p">,</span>
+                              <span class="kc">null</span><span class="p">,</span>
+                              <span class="nx">fnRowRemove</span><span class="p">);</span>
+<span class="c1">// Subscribe to column level topics of table grid</span>
+<span class="kd">var</span> <span class="nx">cToken</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"TableView"</span><span class="p">,</span>
+                              <span class="s2">"widgets.table-grid.view.column-rm"</span><span class="p">,</span>
+                              <span class="kc">null</span><span class="p">,</span>
+                              <span class="nx">fnColumnRemove</span><span class="p">);</span>
+<span class="c1">// Subscribe to any view updates on table grid</span>
+<span class="kd">var</span> <span class="nx">tToken</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"TableView"</span><span class="p">,</span>
+                              <span class="s2">"widgets.table-grid.view.*"</span><span class="p">,</span> <span class="c1">// note the asterisk</span>
+                              <span class="kc">null</span><span class="p">,</span>
+                              <span class="nx">fnUpdateTableLayout</span><span class="p">);</span>
+
+<span class="c1">// Publish when a row is removed</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.view.row-rm"</span><span class="p">,</span>
+               <span class="p">{</span> <span class="nx">row</span><span class="o">:</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">}},</span>
+               <span class="kc">false</span><span class="p">);</span>
+<span class="c1">// console.log: Row removed</span>
+<span class="c1">// console.log: widgets.table-grid.view.row-rm</span>
+<span class="c1">// console.log: { row: { id: 1}}</span>
+<span class="c1">// console.log: Table layout updated</span>
+<span class="c1">// console.log: widgets.table-grid.view.row-rm</span>
+<span class="c1">// console.log: { row: { id: 1}}</span>
+
+<span class="c1">// Publish when a column is removed</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.view.column-rm"</span><span class="p">,</span>
+               <span class="p">{</span> <span class="nx">column</span><span class="o">:</span> <span class="p">{</span> <span class="nx">id</span><span class="o">:</span> <span class="mi">3</span><span class="p">}},</span>
+               <span class="kc">false</span><span class="p">);</span>
+<span class="c1">// console.log: Column removed</span>
+<span class="c1">// console.log: widgets.table-grid.view.column-rm</span>
+<span class="c1">// console.log: { column: { id: 3}}</span>
+<span class="c1">// console.log: Table layout updated</span>
+<span class="c1">// console.log: widgets.table-grid.view.column-rm</span>
+<span class="c1">// console.log: { column: { id: 3}}</span>
+
+<span class="c1">// so, lets say you want to subscribe to all the topic under widgets</span>
+<span class="kd">var</span> <span class="nx">fnWidgetUpdate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Widget updated"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">gWidgetToken</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"Widgets"</span><span class="p">,</span>
+                                    <span class="s2">"widgets.*"</span><span class="p">,</span>
+                                    <span class="kc">null</span><span class="p">,</span>
+                                    <span class="nx">fnWidgetUpdate</span><span class="p">);</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.view"</span><span class="p">,</span>
+               <span class="s2">"view change 1"</span><span class="p">,</span>
+               <span class="kc">false</span><span class="p">);</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.view"</span><span class="p">,</span>
+               <span class="s2">"view change 2"</span><span class="p">,</span>
+               <span class="kc">false</span><span class="p">);</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid"</span><span class="p">,</span>
+               <span class="s2">"table grid push"</span><span class="p">,</span>
+               <span class="kc">false</span><span class="p">);</span>
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets"</span><span class="p">,</span>
+               <span class="s2">"widgetssss push"</span><span class="p">,</span>
+               <span class="kc">false</span><span class="p">);</span>
+<span class="c1">// console.log: Widget updated</span>
+<span class="c1">// console.log: Widget updated</span>
+<span class="c1">// console.log: Widget updated</span>
+<span class="c1">// note: only 3 calls to fnWidgetUpdate as we have subscribed</span>
+<span class="c1">//       to all topics under widgets</span>
+</pre></div>
+
+<h3>Subscribing with context</h3>
+
+<div class="highlight"><pre><span class="c1">// Create a subscriber callback (listener) to listen</span>
+<span class="c1">// to update events on table grid</span>
+<span class="kd">var</span> <span class="nx">fnUpdateTableView</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">topic</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Width: "</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">w</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">"Height: "</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">h</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// Subscribe to a save event of table grid</span>
+<span class="kd">var</span> <span class="nx">token</span> <span class="o">=</span> <span class="nx">PubSub</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s2">"TableStore"</span><span class="p">,</span>
+                             <span class="s2">"widgets.table-grid.view"</span><span class="p">,</span>
+                             <span class="p">{</span><span class="nx">w</span><span class="o">:</span> <span class="mi">300</span><span class="p">,</span> <span class="nx">h</span><span class="o">:</span> <span class="mi">500</span><span class="p">,</span> <span class="nx">t</span><span class="o">:</span> <span class="mi">30</span><span class="p">,</span> <span class="nx">l</span><span class="o">:</span> <span class="mi">60</span><span class="p">},</span> <span class="c1">// can be table grid object</span>
+                             <span class="nx">fnUpdateTableView</span><span class="p">);</span>
+
+<span class="nx">PubSub</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s2">"widgets.table-grid.view"</span><span class="p">,</span>
+               <span class="s2">"table refreshed"</span><span class="p">,</span>
+               <span class="kc">false</span><span class="p">);</span> 
+
+<span class="c1">// console.log: Width: 300</span>
+<span class="c1">// console.log: Height: 500</span>
+
+</pre></div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pubsub maintained by <a href="https://github.com/kpthree">kpthree</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-38037929-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
