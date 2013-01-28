@@ -2,13 +2,10 @@
     "use strict";
     var commonJSModule = typeof module === "object" && typeof require === "function";
     if (commonJSModule) {
-        console.log("commonJSModule");
         module.exports = definition(name, global);
     } else if (typeof define === 'function' && typeof define.amd  === 'object') {
-        console.log("amd");
         define(definition);
     } else {
-        console.log("global");
         global[name] = definition(name, global);
     }
 }('PubSub', (typeof window !== 'undefined' && window) || this,
@@ -54,7 +51,6 @@
         }
 
         function flushCoalesceingQueue() {
-            console.log("Colacing");
             var topic, fnPublisher;
             for (topic in oColacingQueue) {
                 if (oColacingQueue.hasOwnProperty(topic)) { 
@@ -76,7 +72,6 @@
 
         function stopColacing() {
             if (!!iTimer) {
-                console.log("stop colacing");
                 clearInterval(iTimer);
             }
         }
@@ -91,8 +86,6 @@
          **/
         PubSub.publish = function (sTopic, oData, bCoalesce) {
             startColacing();
-            //setTimeout(function(){console.log('in setInterval');}, 0);
-            //console.log('in setInterval out');
             // topic should always be string
             if (!sTopic || typeof sTopic !== "string") {
                 throw new Error("You must provide a valid topic to publish.");
