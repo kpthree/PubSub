@@ -165,3 +165,4 @@ PubSub.publish("widgets.table-grid.view",
 // console.log: Height: 500
 
 ```
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kpthree/pubsub/trend.png)](https://bitdeli.com/free "Trends")
