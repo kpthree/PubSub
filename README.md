@@ -166,3 +166,7 @@ PubSub.publish("widgets.table-grid.view",
 
 ```
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kpthree/pubsub/trend.png)](https://bitdeli.com/free "Trends")
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kpthree/pubsub/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
